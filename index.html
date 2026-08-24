@@ -1139,6 +1139,38 @@
     }
   }
 
+
+  .email-fallback{
+    margin-top:18px;
+    font-size:14px;
+    color:var(--text-secondary);
+  }
+
+  .email-fallback .email-address{
+    user-select:all;
+  }
+
+  .email-copy{
+    border:0;
+    background:transparent;
+    color:var(--accent);
+    font:inherit;
+    font-weight:500;
+    cursor:pointer;
+    padding:4px 6px;
+    margin-left:2px;
+  }
+
+  .email-copy:hover{
+    text-decoration:underline;
+  }
+
+  @media (max-width:760px){
+    .email-fallback{
+      display:none;
+    }
+  }
+
   @media (prefers-reduced-motion: reduce){
     *{ animation: none !important; transition: none !important; }
     html{ scroll-behavior:auto; }
@@ -1697,6 +1729,12 @@
     <div class="contact-links reveal">
       <a class="btn btn-primary" href="mailto:kbesirevic@gmail.com">Email Me</a>
     </div>
+    <div class="email-fallback reveal">
+      <span class="email-address">kbesirevic@gmail.com</span>
+      <span aria-hidden="true"> · </span>
+      <button class="email-copy" type="button" data-email="kbesirevic@gmail.com">Copy</button>
+    </div>
+
   </div>
 </section>
 
@@ -1758,6 +1796,40 @@
 
     window.addEventListener('resize', () => {
       if (window.innerWidth > 760) closeMobileMenu();
+    });
+  }
+
+
+  // Desktop email fallback
+  const emailCopyButton = document.querySelector('.email-copy');
+
+  if (emailCopyButton) {
+    emailCopyButton.addEventListener('click', async () => {
+      const email = emailCopyButton.dataset.email;
+      const originalText = 'Copy';
+
+      try {
+        await navigator.clipboard.writeText(email);
+        emailCopyButton.textContent = 'Copied ✓';
+        setTimeout(() => {
+          emailCopyButton.textContent = originalText;
+        }, 1800);
+      } catch (error) {
+        const textarea = document.createElement('textarea');
+        textarea.value = email;
+        textarea.setAttribute('readonly', '');
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        textarea.remove();
+
+        emailCopyButton.textContent = 'Copied ✓';
+        setTimeout(() => {
+          emailCopyButton.textContent = originalText;
+        }, 1800);
+      }
     });
   }
 
